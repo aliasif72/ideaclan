@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="form.css" />
+</head>
+
+<body>
+    <div class="signupFrm">
+        <form onsubmit="saveForm(event)" class="form">
+            <h1 class="title">Sign up</h1>
+            <hr />
+            <div id="msg"></div>
+            <br />
+            <div class="inputContainer">
+                <input type="text" id="userName" class="input" placeholder="a" required />
+                <label for="userName" class="label">Name</label>
+            </div>
+
+            <div class="inputContainer">
+                <input type="text" id="emailID" class="input" placeholder="a" required />
+                <label for="emailID" class="label">Email</label>
+            </div>
+
+            <div class="inputContainer">
+                <input type="text" id="pass" class="input" placeholder="a" required />
+                <label for="pass" class="label">Password</label>
+            </div>
+            <div id="loginlink"></div>
+            <input type="submit" class="submitBtn" value="Sign up" />
+        </form>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+    <script>
+
+        const msg = document.getElementById("msg");
+      
+        //SIGNUP
+        async function saveForm(event) {
+          event.preventDefault();
+          const name = event.target.userName.value;
+          const email = event.target.emailID.value;
+          const password = event.target.pass.value;
+      
+          try {
+            const query = `
+              mutation addUser($name: String!, $email: String!, $password: String!) {
+                addUser(name: $name, email: $email, password: $password) {
+                  name
+                  email
+                  password
+                }
+              }
+            `;
+      
+            const variables = { name, email, password };
+      
+            const response = await axios.post("http://localhost:4000/graphql", {
+              query,
+              variables
+            });
+      
+            if (response.status === 200) {
+              // Check the response data and handle success
+              console.log(response.data);
+              msg.innerHTML = `<p style="color:green;">SignUP Successful</p>`;
+            }
+            else{
+                console.log("cancel")
+            }
+          } catch (err) {
+            console.error(err);
+            msg.innerHTML = `<p style="color:red;">Error in SignUP</p>`;
+          }
+        }
+      </script>
+      
+</body>
+
+</html>
